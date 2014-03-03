@@ -29,4 +29,15 @@
 	  <servlet-name>UserServlet</servlet-name>
 	  <url-pattern>/getUserVideos</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+	  <display-name>replyVideoPage</display-name>
+	  <servlet-name>VideoServlet</servlet-name>
+	  <servlet-class>edu.columbia.servlets.VideoServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	  <servlet-name>VideoServlet</servlet-name>
+	  <url-pattern>/getReplyVideos</url-pattern>
+	</servlet-mapping>
+	
 </web-app>

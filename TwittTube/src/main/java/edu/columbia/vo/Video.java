@@ -6,12 +6,14 @@ public class Video {
 	private String videoLoc;
 	private String userId;
 	private String replyVideoId;
+	private String uploadedBy;
 	
-	public Video(String videoId, String userId,String videoLoc, String replyId) {
+	public Video(String videoId, String userId,String videoLoc, String replyId, String name) {
 		this.videoId = videoId;
 		this.videoLoc = videoLoc;
 		this.userId = userId;
 		this.replyVideoId = replyId;
+		this.uploadedBy = name;
 	}
 	
 	public String getVideoId() {
@@ -37,6 +39,14 @@ public class Video {
 	}
 	public void setReplyVideoId(String replyVideoId) {
 		this.replyVideoId = replyVideoId;
+	}
+
+	public String getUploadedBy() {
+		return uploadedBy;
+	}
+
+	public void setUploadedBy(String uploadedBy) {
+		this.uploadedBy = uploadedBy;
 	}
 
 }

@@ -13,15 +13,39 @@
     String abc = "Tesgin";
 %>
 <% videoList= (List<Video>) request.getAttribute("videoList"); %>
+
+<script type="text/javascript">
+	function getReplyVideos(id) {
+	//	alert(button.videoId);
+//		var button = document.getElementById(id);
+		var form = document.getElementById(id);
+//		form.action = "getReplyVideos?videoId=" + id;
+		var hidden = document.createElement("input");
+		hidden.type = "hidden";
+		hidden.name = "videoId";
+		hidden.value = id;
+		form.appendChild(hidden);
+		form.submit();
+	}
+</script>
 </head>
 <body>
 <table>
 	<% for(int i=0;i<videoList.size();i++) { %>
-	<tr><td> <param name="moviename" value="http://fpdownload.adobe.com/strobe/FlashMediaPlayback_101.swf"> </param> 
+	<tr>
+		<td>Video Uploaded by <%=videoList.get(i).getUploadedBy()%></td>
+	</tr>
+	<tr>
+		<td> <param name="moviename" value="http://fpdownload.adobe.com/strobe/FlashMediaPlayback_101.swf"> </param> 
 			<param name="flashvars" value="src=<%=videoList.get(i).getVideoLoc()%>"></param> 
 			<param name="allowFullScreen" value="true"></param> <param name="allowscriptaccess" value="always"></param> 
 			<embed src="http://fpdownload.adobe.com/strobe/FlashMediaPlayback_101.swf" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="500" height="300" flashvars="src=<%=videoList.get(i).getVideoLoc()%>"></embed> </object>
-	</td></tr>
+		</td>
+		<td> 
+			<input type="image" src="resources/reply.png" name="<%=videoList.get(i).getVideoId()%>" height="30" width="100" onclick="getReplyVideos(this.name)" />
+			<form id="<%=videoList.get(i).getVideoId()%>" method="get" action="getReplyVideos?videoId=<%=videoList.get(i).getVideoId()%>"></form>
+		</td>
+	</tr>
 <% } %>
 </table>
 <object width="500" height="300"> 

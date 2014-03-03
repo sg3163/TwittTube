@@ -23,13 +23,25 @@ public class VideosDao {
  
 	public List<Video> getVideosforUser(String userId){
  
-		String sql = "select * from usr_videos uv where user_id in (" +
+	/*	String sql = "select * from usr_videos uv where user_id in (" +
 					"	select tu.user_id from twit_users tu " +
 					"	join USR_GRP_MAP maps on maps.user_id = tu.user_id" +
 					"	where maps.group_id in (" +
 					"	select maps.group_id from USR_GRP_MAP maps" +
 					"	join twit_groups tg on tg.group_id = maps.group_id" +
-					"	where maps.user_id = ?))";
+					"	where maps.user_id = ?))";*/
+		
+		String sql = "select uv.*, t.first_nm || ' ' || t.last_nm as name " +
+					"	from usr_videos uv " +
+					"	join twit_users t on t.user_id = uv.user_id" +
+					"	where reply_to is null and uv.user_id in (" +
+				"	select tu.user_id " +
+				"	from twit_users tu" +
+				"	join USR_GRP_MAP maps on maps.user_id = tu.user_id" +
+				"	where maps.group_id in (" +
+				"	select maps.group_id from USR_GRP_MAP maps" +
+				"	join twit_groups tg on tg.group_id = maps.group_id" +
+				"	where maps.user_id = ?))";
  
 		Connection conn = null;
  
@@ -45,7 +57,8 @@ public class VideosDao {
 					rs.getString("VIDEO_ID"),
 					rs.getString("USER_ID"), 
 					rs.getString("VIDEO_LOC"),
-					rs.getString("REPLY_TO")
+					rs.getString("REPLY_TO"),
+					rs.getString("NAME")
 				);
 				videosList.add(video);
 			}
@@ -62,6 +75,52 @@ public class VideosDao {
 			}
 		}
 	}
+	
+	public List<Video> getVideoAndReplies(String videoId){
+		 
+			String sql = "select uv.*, t.first_nm || ' ' || t.last_nm as name  " +
+				        " from usr_videos uv  " +
+				       " join twit_users t on t.user_id = uv.user_id " +
+				        "where reply_to is null and  uv.video_id= ? " +
+				       " union " +
+				      " select uv.*, t.first_nm || ' ' || t.last_nm as name  " +
+				       " from usr_videos uv  " +
+				      "  join twit_users t on t.user_id = uv.user_id " +
+				       " where reply_to=?";
+	 
+			Connection conn = null;
+	 
+			try {
+				conn = dataSource.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ps.setString(1, videoId);
+				ps.setString(2, videoId);
+				List<Video> videosList = new ArrayList<>();
+				Video video = null;
+				ResultSet rs = ps.executeQuery();
+				while (rs.next()) {
+					video = new Video(
+						rs.getString("VIDEO_ID"),
+						rs.getString("USER_ID"), 
+						rs.getString("VIDEO_LOC"),
+						rs.getString("REPLY_TO"),
+						rs.getString("NAME")
+					);
+					videosList.add(video);
+				}
+				rs.close();
+				ps.close();
+				return videosList;
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			} finally {
+				if (conn != null) {
+					try {
+					conn.close();
+					} catch (SQLException e) {}
+				}
+			}
+		}
 	
 	public List<User> findByCustomerId(int custId){
 		 
