@@ -1,0 +1,99 @@
+package edu.columbia.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import edu.columbia.vo.User;
+import edu.columbia.vo.Video;
+
+public class VideosDao {
+	
+	private DataSource dataSource;
+	 
+	public void setDataSource(DataSource dataSource) {
+		System.out.println("------------- Setting datasource to the dao");
+		this.dataSource = dataSource;
+	}
+ 
+	public List<Video> getVideosforUser(String userId){
+ 
+		String sql = "select * from usr_videos uv where user_id in (" +
+					"	select tu.user_id from twit_users tu " +
+					"	join USR_GRP_MAP maps on maps.user_id = tu.user_id" +
+					"	where maps.group_id in (" +
+					"	select maps.group_id from USR_GRP_MAP maps" +
+					"	join twit_groups tg on tg.group_id = maps.group_id" +
+					"	where maps.user_id = ?))";
+ 
+		Connection conn = null;
+ 
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userId);
+			List<Video> videosList = new ArrayList<>();
+			Video video = null;
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				video = new Video(
+					rs.getString("VIDEO_ID"),
+					rs.getString("USER_ID"), 
+					rs.getString("VIDEO_LOC"),
+					rs.getString("REPLY_TO")
+				);
+				videosList.add(video);
+			}
+			rs.close();
+			ps.close();
+			return videosList;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+	}
+	
+	public List<User> findByCustomerId(int custId){
+		 
+		String sql = "SELECT * FROM TWIT_USERS";
+ 
+		Connection conn = null;
+ 
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			List<User> usersList = new ArrayList<>();
+			User user = null;
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				user = new User(
+					rs.getString("USER_ID"),
+					rs.getString("FIRST_NM"), 
+					rs.getString("LAST_NM")
+				);
+				usersList.add(user);
+			}
+			rs.close();
+			ps.close();
+			return usersList;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+	}
+}
