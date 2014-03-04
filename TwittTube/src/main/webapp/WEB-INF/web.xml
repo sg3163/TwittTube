@@ -40,4 +40,13 @@
 	  <url-pattern>/getReplyVideos</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+    <servlet-name>UploadVideo</servlet-name>
+    <servlet-class>edu.columbia.servlets.VideoUploader</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UploadVideo</servlet-name>
+    <url-pattern>/UploadVideo.do</url-pattern>
+  </servlet-mapping>
+	
 </web-app>

@@ -155,4 +155,33 @@ public class VideosDao {
 			}
 		}
 	}
+	
+	public void saveVideoMetadata(String videoId, String userId, String videoLoc, String replyTo)
+	{
+		String sql = "INSERT INTO USR_VIDEOS VALUSES (" + videoId + "," + userId + "," + videoLoc + "," + replyTo + ")";
+		Connection conn = null;
+		 
+		try 
+		{
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.executeUpdate(sql);
+			ps.close();
+		} 
+		catch (SQLException e) 
+		{
+			throw new RuntimeException(e);
+		} 
+		finally 
+		{
+			if (conn != null) 
+			{
+				try 
+				{
+					conn.close();
+				} 
+				catch (SQLException e) {}
+			}
+		}
+	}
 }

@@ -31,7 +31,6 @@
 			<form method="get" action="/page2">
 				<input type="image" src="resources/reply.png" name="saveForm" class="btTxt submit" id="saveForm" height="30" width="100"/>
 			</form>
-		</td>
 	</tr>
 </table>
 <table>

@@ -45,6 +45,17 @@
 			<input type="image" src="resources/reply.png" name="<%=videoList.get(i).getVideoId()%>" height="30" width="100" onclick="getReplyVideos(this.name)" />
 			<form id="<%=videoList.get(i).getVideoId()%>" method="get" action="getReplyVideos?videoId=<%=videoList.get(i).getVideoId()%>"></form>
 		</td>
+		<td>	
+			<form action="UploadVideo.do" method="post" enctype="multipart/form-data">
+		      <input type="hidden" name="key" value="uploads/${filename}">
+		      <!--<input type="hidden" name="Content-Type" value="video/mp4">-->
+		      <input type="hidden" name="replyVideoId" value="<%=videoList.get(i).getVideoId()%>">
+		      File to upload to S3: 
+		      <input name="file" type="file"> 
+		      <br> 
+		      <input type="submit" value="Upload File to S3"> 
+		    </form> 
+		</td>
 	</tr>
 <% } %>
 </table>
