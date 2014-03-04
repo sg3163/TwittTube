@@ -9,6 +9,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import edu.columbia.dao.*;
 
 /*
@@ -74,12 +78,17 @@ public class VideoUploader extends HttpServlet {
 			   */
 			   
 			   String videoId = "";
-			   String userId = "";
+			   String userId = request.getParameter("userid");
 			   String videoLoc = "http://d2vpjum3aigw6y.cloudfront.net/videos/" + filename;
 			   String videoReplyTo = request.getParameter("videoReplyTo");
 			   
-			   VideosDao vd = new VideosDao();
-			   vd.saveVideoMetadata(videoId, userId, videoLoc, videoReplyTo);
+			   ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(
+						request.getSession().getServletContext());
+				VideosDao dao = ctx.getBean(VideosDao.class);
+			   
+				videoId = dao.getNextVideoSequence();
+				
+				dao.saveVideoMetadata(videoId, userId, videoLoc, videoReplyTo);
 			   m.putObject("videos/" + filename, f);
 			  
 			   f.delete();

@@ -9,10 +9,12 @@
 <title>Insert title here</title>
 <%! 
 	List<Video> videoList =	null;
+	String userId = null;
 //	List<Video> videoList = (List<Video>) getServletContext().getAttribute("videoList");
     String abc = "Tesgin";
 %>
-<% videoList= (List<Video>) request.getAttribute("videoList"); %>
+<% videoList= (List<Video>) request.getAttribute("videoList");
+	userId = (String) request.getAttribute("userid");%>
 
 <script type="text/javascript">
 	function getReplyVideos(id) {
@@ -25,6 +27,13 @@
 		hidden.name = "videoId";
 		hidden.value = id;
 		form.appendChild(hidden);
+		
+		var user = document.createElement("input");
+		user.type = "hidden";
+		user.name = "userid";
+		user.value = <%=userId%>;
+		form.appendChild(user);
+		
 		form.submit();
 	}
 </script>
@@ -49,7 +58,8 @@
 			<form action="UploadVideo.do" method="post" enctype="multipart/form-data">
 		      <input type="hidden" name="key" value="uploads/${filename}">
 		      <!--<input type="hidden" name="Content-Type" value="video/mp4">-->
-		      <input type="hidden" name="replyVideoId" value="<%=videoList.get(i).getVideoId()%>">
+		      	<input type="hidden" name="replyVideoId" value="<%=videoList.get(i).getVideoId()%>">
+		      	<input type="hidden" name="userid" value="<%=userId%>">
 		      File to upload to S3: 
 		      <input name="file" type="file"> 
 		      <br> 

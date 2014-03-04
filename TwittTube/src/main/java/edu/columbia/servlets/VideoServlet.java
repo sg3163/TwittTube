@@ -35,6 +35,7 @@ public class VideoServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String videoId = request.getParameter("videoId");
+		String userId = request.getParameter("userid");
 		ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(
 				request.getSession().getServletContext());
 			VideosDao dao = ctx.getBean(VideosDao.class);
@@ -57,6 +58,7 @@ public class VideoServlet extends HttpServlet {
 			
 			request.setAttribute("mainVideo", mainVideo);
 			request.setAttribute("replyVideos", replyVidoes);
+			request.setAttribute("userid", userId);
 			request.getRequestDispatcher("/videos.jsp").forward(request, response);
 	}
 

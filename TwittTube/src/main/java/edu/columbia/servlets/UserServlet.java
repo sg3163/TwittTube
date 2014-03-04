@@ -36,6 +36,7 @@ public class UserServlet extends HttpServlet {
 				request.getSession().getServletContext());
 			VideosDao dao = ctx.getBean(VideosDao.class);
 			request.setAttribute("videoList", dao.getVideosforUser(userId));
+			request.setAttribute("userid", userId);
 			request.getRequestDispatcher("/welcome.jsp").forward(request, response);
 	}
 

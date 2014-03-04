@@ -156,16 +156,49 @@ public class VideosDao {
 		}
 	}
 	
+	public String getNextVideoSequence() {
+		String sql = "select usr_videos_seq.nextval from dual";
+		Connection conn = null;
+		
+		try 
+		{
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getString("NEXTVAL");
+			}
+			rs.close();
+			ps.close();
+		} 
+		catch (SQLException e) 
+		{
+			throw new RuntimeException(e);
+		} 
+		finally 
+		{
+			if (conn != null) 
+			{
+				try 
+				{
+					conn.close();
+				} 
+				catch (SQLException e) {}
+			}
+		}
+		return "0";
+	}
+	
 	public void saveVideoMetadata(String videoId, String userId, String videoLoc, String replyTo)
 	{
-		String sql = "INSERT INTO USR_VIDEOS VALUSES (" + videoId + "," + userId + "," + videoLoc + "," + replyTo + ")";
+		String sql = "INSERT INTO USR_VIDEOS VALUES (" +  "\'" + videoId +  "\'" + "," +  "\'" + userId +  "\'" + "," +  "\'" + videoLoc+  "\'" + ","+  "\'" + replyTo +  "\'" + ") ";
 		Connection conn = null;
 		 
 		try 
 		{
 			conn = dataSource.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.executeUpdate(sql);
+			ps.executeUpdate(sql); 
 			ps.close();
 		} 
 		catch (SQLException e) 
