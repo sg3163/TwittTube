@@ -78,9 +78,9 @@ public class VideoUploader extends HttpServlet {
 			   */
 			   
 			   String videoId = "";
-			   String userId = request.getParameter("userid");
+			   String userId = mp.getParameter("userid");
 			   String videoLoc = "http://d2vpjum3aigw6y.cloudfront.net/videos/" + filename;
-			   String videoReplyTo = request.getParameter("videoReplyTo");
+			   String videoReplyTo = mp.getParameter("replyVideoId");
 			   
 			   ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(
 						request.getSession().getServletContext());
@@ -88,8 +88,8 @@ public class VideoUploader extends HttpServlet {
 			   
 				videoId = dao.getNextVideoSequence();
 				
+				m.putObject("videos/" + filename, f);
 				dao.saveVideoMetadata(videoId, userId, videoLoc, videoReplyTo);
-			   m.putObject("videos/" + filename, f);
 			  
 			   f.delete();
 			   
