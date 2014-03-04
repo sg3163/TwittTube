@@ -2,8 +2,6 @@ package edu.columbia.servlets;
 
 import java.io.*;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,23 +13,17 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import edu.columbia.dao.*;
 
-/*
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-*/
 import com.oreilly.servlet.MultipartRequest;
 
-public class VideoUploader extends HttpServlet {
+public class VideoUploaderServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public VideoUploader() {
+    public VideoUploaderServlet() {
         super();
-        // TODO Auto-generated constructor stub
+        System.out.println("Creating video uploader instance");
     }
 
 	/**
@@ -39,6 +31,7 @@ public class VideoUploader extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		doPost(request, response);
 	}
 
 	/**
