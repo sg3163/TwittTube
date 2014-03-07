@@ -9,22 +9,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import edu.columbia.dao.*;
 import edu.columbia.vo.User;
 
-<<<<<<< HEAD
 /*
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 */
-=======
->>>>>>> FETCH_HEAD
+
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
 import com.amazonaws.services.elastictranscoder.AmazonElasticTranscoderClient;
 import com.amazonaws.services.elastictranscoder.model.CreateJobOutput;
@@ -36,8 +33,9 @@ import com.amazonaws.services.elastictranscoder.model.Preset;
 import com.oreilly.servlet.MultipartRequest;
 
 public class VideoUploaderServlet extends HttpServlet {
+			   
 	private static final long serialVersionUID = 1L;
-       
+    
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -82,27 +80,10 @@ public class VideoUploaderServlet extends HttpServlet {
 			   VideosDao dao = ctx.getBean(VideosDao.class);
 		   
 			   videoId = dao.getNextVideoSequence();
-			
 			   SnsManager sns = new SnsManager();
-<<<<<<< HEAD
-		
-			   String groupID = dao.getGroupIDByUserID(userId);
-			   String phoneNumber = dao.getPhoneNumberByUserID(userId);
-			   String email = dao.getEmailByUserID(userId);
 			   
 			   videoId = dao.getNextVideoSequence();
-		  
-			   User user = dao.getUserDetails(userId);
 			
-			   String groupID = user.getGroupNumber();
-			   String phoneNumber = user.getPhoneNumber();
-			   String email = user.getEmail();
-			   
-			   videoId = dao.getNextVideoSequence();
-		
-=======
-			   
->>>>>>> FETCH_HEAD
 			   User user = dao.getUserDetails(userId);
 			
 			   String groupID = user.getGroupNumber();
@@ -115,10 +96,11 @@ public class VideoUploaderServlet extends HttpServlet {
 					sns.createTopic(groupID);
 				
 				sns.subscribe(groupID, phoneNumber, email);
-				sns.sendMessage(groupID);
+				sns.sendMessage(groupID, user.getFirstName(), user.getLastName());
 				
 				m.putObject("videos/" + filename, f);
 				dao.saveVideoMetadata(videoId, userId, videoLoc, videoReplyTo);
+			  
 				
 				// Create AWS job to upload transcode uploaded video in iphone/ipad format
 		/*		AmazonElasticTranscoderClient etc = new AmazonElasticTranscoderClient(new ClasspathPropertiesFileCredentialsProvider());
@@ -199,4 +181,5 @@ public class VideoUploaderServlet extends HttpServlet {
 				*/
 		
 	}
+
 }

@@ -233,8 +233,8 @@ public class VideosDao {
 			User usr = new User();
 			while (rs.next()) {
 				usr.setEmail(rs.getString("EMAIL"));
-				usr.setEmail(rs.getString("PH_NO"));
-				usr.setEmail(rs.getString("GROUP_ID"));
+				usr.setPhoneNumber(rs.getString("PH_NO"));
+				usr.setGroupNumber(rs.getString("GROUP_ID"));
 			}
 			rs.close();
 			ps.close();
