@@ -2,6 +2,8 @@ package edu.columbia.servlets;
 
 import java.io.*;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,7 +14,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import edu.columbia.dao.*;
+import edu.columbia.vo.User;
 
+import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
+import com.amazonaws.services.elastictranscoder.AmazonElasticTranscoderClient;
+import com.amazonaws.services.elastictranscoder.model.CreateJobOutput;
+import com.amazonaws.services.elastictranscoder.model.CreateJobPlaylist;
+import com.amazonaws.services.elastictranscoder.model.CreateJobRequest;
+import com.amazonaws.services.elastictranscoder.model.JobInput;
+import com.amazonaws.services.elastictranscoder.model.JobOutput;
+import com.amazonaws.services.elastictranscoder.model.Preset;
 import com.oreilly.servlet.MultipartRequest;
 
 public class VideoUploaderServlet extends HttpServlet {
@@ -59,15 +70,106 @@ public class VideoUploaderServlet extends HttpServlet {
 			   
 			   ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(
 						request.getSession().getServletContext());
-				VideosDao dao = ctx.getBean(VideosDao.class);
+			   VideosDao dao = ctx.getBean(VideosDao.class);
+		   
+			   videoId = dao.getNextVideoSequence();
+			
+			   SnsManager sns = new SnsManager();
 			   
-				videoId = dao.getNextVideoSequence();
+			   User user = dao.getUserDetails(userId);
+			
+			   String groupID = user.getGroupNumber();
+			   String phoneNumber = user.getPhoneNumber();
+			   String email = user.getEmail();
+			   
+			   videoId = dao.getNextVideoSequence();
+			   
+				if (!sns.isTopicExisting(groupID))
+					sns.createTopic(groupID);
+				
+				sns.subscribe(groupID, phoneNumber, email);
+				sns.sendMessage(groupID);
 				
 				m.putObject("videos/" + filename, f);
 				dao.saveVideoMetadata(videoId, userId, videoLoc, videoReplyTo);
-			  
+				
+				// Create AWS job to upload transcode uploaded video in iphone/ipad format
+		/*		AmazonElasticTranscoderClient etc = new AmazonElasticTranscoderClient(new ClasspathPropertiesFileCredentialsProvider());
+				
+				CreateJobRequest jobReq = new CreateJobRequest();
+				
+				jobReq.setPipelineId("iphonevideoconverter");
+				
+				JobInput input = new JobInput();
+				input.setKey(filename);
+				jobReq.setInput(input);
+				
+				CreateJobOutput output = new CreateJobOutput();
+				output.setKey(filename);
+				output.setPresetId("iPhone4S");
+				
+				jobReq.setOutput(output);
+				
+				Preset preset = new Preset();
+				preset.setType("iPhone4S");
+				
+				etc.createJob(jobReq);*/
+				
 			   f.delete();
 		}
+		
+		// request.getRequestDispatcher("/videos.jsp").forward(request, response);
+		
+				/*
+				ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
+				
+				try
+				{
+					List fileItems = upload.parseRequest(request);
+					Iterator i = fileItems.iterator();
+					
+					while ( i.hasNext () ) 
+				      {
+				         FileItem fi = (FileItem)i.next();
+				         
+				         if ( !fi.isFormField() )	
+				         {
+				            String fieldName = fi.getFieldName();
+				            String fileName = fi.getName();
+				            String contentType = fi.getContentType();
+				            boolean isInMemory = fi.isInMemory();
+				            long sizeInBytes = fi.getSize();
+				            File file;
+				            
+				            // Write the file
+				            if( fileName.lastIndexOf("\\") >= 0 )
+				            {
+				               file = new File(fileName.substring( fileName.lastIndexOf("\\"))) ;
+				            }
+				            else
+				            {
+				               file = new File(fileName.substring(fileName.lastIndexOf("\\")+1)) ;
+				            }
+				            
+				            fi.write( file ) ;
+				         
+				            m.putObject("video file", file);
+				            file.delete();
+				            
+				            out.println("Uploaded Filename: " + file.getName() + "<br>");
+				         }
+				         
+				      }
+				}
+				catch (FileUploadException e)
+				{
+					out.println(e.getMessage() + "<br>");
+				}
+				catch (Exception e)
+				{
+					out.println("exception");
+				}
+				*/
 		
 	}
 

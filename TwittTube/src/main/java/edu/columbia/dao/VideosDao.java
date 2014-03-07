@@ -217,4 +217,43 @@ public class VideosDao {
 			}
 		}
 	}
+	
+	public User getUserDetails(String userId) {
+		String sql = "select u.user_id,email, ph_no, ma.group_id from twit_users u " +
+					" join USR_GRP_MAP ma on ma.user_id = u.user_id" +
+					" where u.user_id = ?";
+		Connection conn = null;
+		 
+		try 
+		{
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userId);
+			ResultSet rs = ps.executeQuery();
+			User usr = new User();
+			while (rs.next()) {
+				usr.setEmail(rs.getString("EMAIL"));
+				usr.setEmail(rs.getString("PH_NO"));
+				usr.setEmail(rs.getString("GROUP_ID"));
+			}
+			rs.close();
+			ps.close();
+			return usr;
+		} 
+		catch (SQLException e) 
+		{
+			throw new RuntimeException(e);
+		} 
+		finally 
+		{
+			if (conn != null) 
+			{
+				try 
+				{
+					conn.close();
+				} 
+				catch (SQLException e) {}
+			}
+		}
+	}
 }
