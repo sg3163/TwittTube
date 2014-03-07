@@ -1,0 +1,4 @@
+
+*.class
+
+TwittTube/src/main/resources/AwsCredentials.properties

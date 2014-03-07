@@ -84,9 +84,22 @@ public class VideoUploader extends HttpServlet {
 			   
 			   ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(
 						request.getSession().getServletContext());
-				VideosDao dao = ctx.getBean(VideosDao.class);
+			   VideosDao dao = ctx.getBean(VideosDao.class);
+		   
+			   videoId = dao.getNextVideoSequence();
+			
+			   SnsManager sns = new SnsManager();
+			
+			   String groupID = dao.getGroupIDByUserID(userId);
+			   String phoneNumber = dao.getPhoneNumberByUserID(userId);
+			   String email = dao.getEmailByUserID(userId);
 			   
-				videoId = dao.getNextVideoSequence();
+			   
+				if (!sns.isTopicExisting(groupID))
+					sns.createTopic(groupID);
+				
+				sns.subscribe(groupID, phoneNumber, email);
+				sns.sendMessage(groupID);
 				
 				m.putObject("videos/" + filename, f);
 				dao.saveVideoMetadata(videoId, userId, videoLoc, videoReplyTo);
