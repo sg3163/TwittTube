@@ -41,11 +41,12 @@
 	</servlet-mapping>
 	
 	<servlet>
-    <servlet-name>UploadVideo</servlet-name>
-    <servlet-class>edu.columbia.servlets.VideoUploader</servlet-class>
+	    <servlet-name>VideoUploaderServlet</servlet-name>
+	    <servlet-class>edu.columbia.servlets.VideoUploaderServlet</servlet-class>
+    	<load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
-    <servlet-name>UploadVideo</servlet-name>
+    <servlet-name>VideoUploaderServlet</servlet-name>
     <url-pattern>/UploadVideo.do</url-pattern>
   </servlet-mapping>
 	

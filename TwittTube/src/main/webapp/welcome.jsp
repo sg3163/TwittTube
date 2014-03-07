@@ -45,10 +45,15 @@
 		<td>Video Uploaded by <%=videoList.get(i).getUploadedBy()%></td>
 	</tr>
 	<tr>
-		<td> <param name="moviename" value="http://fpdownload.adobe.com/strobe/FlashMediaPlayback_101.swf"> </param> 
-			<param name="flashvars" value="src=<%=videoList.get(i).getVideoLoc()%>"></param> 
-			<param name="allowFullScreen" value="true"></param> <param name="allowscriptaccess" value="always"></param> 
-			<embed src="http://fpdownload.adobe.com/strobe/FlashMediaPlayback_101.swf" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="500" height="300" flashvars="src=<%=videoList.get(i).getVideoLoc()%>"></embed> </object>
+	
+		<td> 
+			<video width="320" height="240" controls>
+			  <source src="<%=videoList.get(i).getVideoLoc()%>" type="video/mp4">
+			  <source src="<%=videoList.get(i).getVideoLoc().replaceAll("mp4", "ogg")%>" type="video/ogg">
+			  <object data="<%=videoList.get(i).getVideoLoc()%>" width="320" height="240">
+			    <embed src="<%=videoList.get(i).getVideoLoc().replaceAll("mp4", "swf")%>" width="320" height="240">
+			  </object>
+			</video>
 		</td>
 		<td> 
 			<input type="image" src="resources/reply.png" name="<%=videoList.get(i).getVideoId()%>" height="30" width="100" onclick="getReplyVideos(this.name)" />
