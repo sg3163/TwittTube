@@ -3,10 +3,12 @@ package edu.columbia.dao;
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.CreateTopicResult;
 import com.amazonaws.services.sns.model.ListSubscriptionsByTopicResult;
 import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.PublishRequest;
+import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.Subscription;
 import com.amazonaws.services.sns.model.Topic;
 
@@ -21,6 +23,7 @@ public class SnsManager {
 	public void createTopic(String groupID)
 	{
 		CreateTopicResult r = sns.createTopic("TwittTubeTopic" + groupID);
+		
 	}
 	
 	public boolean isTopicExisting(String groupID)
@@ -48,13 +51,13 @@ public class SnsManager {
 			String[] arnArr = arn.split(":");
 			if (arnArr[arnArr.length - 1].equalsIgnoreCase("TwittTubeTopic" + groupID))
 			{
-				sns.subscribe(arn, "sms", phoneNumber);
+				//sns.subscribe(arn, "sms", phoneNumber);
 				sns.subscribe(arn, "email", email);
 			}
 		}
 	}
 	
-	public void sendMessage(String groupID)
+	public void sendMessage(String groupID, String firstName, String lastName)
 	{
 		ListTopicsResult r = sns.listTopics();
 		
@@ -63,7 +66,7 @@ public class SnsManager {
 			String arn = t.getTopicArn();
 			String[] arnArr = arn.split(":");
 			if (arnArr[arnArr.length - 1].equalsIgnoreCase("TwittTubeTopic" + groupID))
-				sns.publish(arn, "a new video posted", "a new video posted");
+				sns.publish(arn, "a new video posted by " + firstName + " " + lastName, "a new video posted");
 		}
 	}
 }

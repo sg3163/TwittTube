@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import edu.columbia.dao.VideosDao;
+import edu.columbia.util.UAgentInfo;
 import edu.columbia.vo.Video;
 
 /**
@@ -43,16 +44,26 @@ public class VideoServlet extends HttpServlet {
 			Video mainVideo = null;
 			List<Video> replyVidoes = new ArrayList<Video>();
 			
+			System.out.println("Client IP ----------------- " +getClientIpAddr(request));
+			System.out.println("Is Mobile ----------------- " +isThisRequestCommingFromAMobileDevice(request));
+			
+			boolean isMobileRequest = isThisRequestCommingFromAMobileDevice(request);
+			
 			for(int i=0;i<allvideos.size();i++) {
 				if(allvideos.get(i).getReplyVideoId() == null) {
 					mainVideo = allvideos.get(i);
+					if(isMobileRequest) {
+						mainVideo.setVideoLoc(mainVideo.getVideoLoc().replaceAll("twittest", "twittestiphone"));
+					}
 					break;
 				}
 			}
 			
 			for(int i=0;i<allvideos.size();i++) {
 				if(allvideos.get(i) != mainVideo) {
-					replyVidoes.add(allvideos.get(i));
+					Video vid = allvideos.get(i);
+					vid.setVideoLoc(vid.getVideoLoc().replaceAll("twittest", "twittestiphone"));
+					replyVidoes.add(vid);
 				}
 			}
 			
@@ -69,5 +80,39 @@ public class VideoServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request,response);
 	}
+	
+	private boolean isThisRequestCommingFromAMobileDevice(HttpServletRequest request){
+
+	    String userAgent = request.getHeader("User-Agent");
+	    String httpAccept = request.getHeader("Accept");
+
+	    UAgentInfo detector = new UAgentInfo(userAgent, httpAccept);
+
+	    if (detector.detectMobileQuick()) {
+	        return true;
+	    }
+
+	    return false;
+	}
+	
+	public static String getClientIpAddr(HttpServletRequest request) {  
+        String ip = request.getHeader("X-Forwarded-For");  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("Proxy-Client-IP");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("WL-Proxy-Client-IP");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("HTTP_CLIENT_IP");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getRemoteAddr();  
+        }  
+        return ip;  
+    }  
 
 }

@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import edu.columbia.dao.*;
+import edu.columbia.util.UAgentInfo;
 import edu.columbia.vo.User;
 
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
@@ -23,12 +24,16 @@ import com.amazonaws.services.elastictranscoder.model.CreateJobPlaylist;
 import com.amazonaws.services.elastictranscoder.model.CreateJobRequest;
 import com.amazonaws.services.elastictranscoder.model.JobInput;
 import com.amazonaws.services.elastictranscoder.model.JobOutput;
+import com.amazonaws.services.elastictranscoder.model.ListPipelinesRequest;
+import com.amazonaws.services.elastictranscoder.model.ListPipelinesResult;
+import com.amazonaws.services.elastictranscoder.model.Pipeline;
 import com.amazonaws.services.elastictranscoder.model.Preset;
 import com.oreilly.servlet.MultipartRequest;
 
 public class VideoUploaderServlet extends HttpServlet {
+			   
 	private static final long serialVersionUID = 1L;
-       
+    
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -73,9 +78,10 @@ public class VideoUploaderServlet extends HttpServlet {
 			   VideosDao dao = ctx.getBean(VideosDao.class);
 		   
 			   videoId = dao.getNextVideoSequence();
-			
 			   SnsManager sns = new SnsManager();
 			   
+			   videoId = dao.getNextVideoSequence();
+			
 			   User user = dao.getUserDetails(userId);
 			
 			   String groupID = user.getGroupNumber();
@@ -88,32 +94,52 @@ public class VideoUploaderServlet extends HttpServlet {
 					sns.createTopic(groupID);
 				
 				sns.subscribe(groupID, phoneNumber, email);
-				sns.sendMessage(groupID);
+				sns.sendMessage(groupID, user.getFirstName(), user.getLastName());
 				
 				m.putObject("videos/" + filename, f);
 				dao.saveVideoMetadata(videoId, userId, videoLoc, videoReplyTo);
+			  
 				
 				// Create AWS job to upload transcode uploaded video in iphone/ipad format
-		/*		AmazonElasticTranscoderClient etc = new AmazonElasticTranscoderClient(new ClasspathPropertiesFileCredentialsProvider());
+				try {
+					
+					AmazonElasticTranscoderClient etc = new AmazonElasticTranscoderClient(new ClasspathPropertiesFileCredentialsProvider());
+					
+					
+					// Get the pipeline Created in AWS with name iphonevideoconverter
+					ListPipelinesRequest listPipelineRequest = new ListPipelinesRequest();
+					ListPipelinesResult listPipelineResult = etc.listPipelines(listPipelineRequest);
+					
+					Pipeline pipeline = null;
+					
+					for (Pipeline pip : listPipelineResult.getPipelines()) {
+						if(pip.getName().equalsIgnoreCase("iphonevideoconverter")) {
+							pipeline = pip;
+							break;
+						}
+					}
+					
+					
+					CreateJobRequest jobReq = new CreateJobRequest();
+					
+					jobReq.setPipelineId(pipeline.getId());
+					
+					JobInput input = new JobInput();
+					input.setKey(filename);
+					jobReq.setInput(input);
+					
+					
+					CreateJobOutput output = new CreateJobOutput();
+					output.setKey(filename);
+					output.setPresetId("1351620000001-100020");
+					
+					jobReq.setOutput(output);
+					etc.createJob(jobReq);
+					
+				} catch(Exception e) {
+					System.out.println("Unable to Elastically Transcode uploaded file");
+				}
 				
-				CreateJobRequest jobReq = new CreateJobRequest();
-				
-				jobReq.setPipelineId("iphonevideoconverter");
-				
-				JobInput input = new JobInput();
-				input.setKey(filename);
-				jobReq.setInput(input);
-				
-				CreateJobOutput output = new CreateJobOutput();
-				output.setKey(filename);
-				output.setPresetId("iPhone4S");
-				
-				jobReq.setOutput(output);
-				
-				Preset preset = new Preset();
-				preset.setType("iPhone4S");
-				
-				etc.createJob(jobReq);*/
 				
 			   f.delete();
 		}
@@ -172,5 +198,5 @@ public class VideoUploaderServlet extends HttpServlet {
 				*/
 		
 	}
-
+	
 }

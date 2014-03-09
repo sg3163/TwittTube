@@ -74,7 +74,16 @@
 	</tr>
 <% } %>
 </table>
-<object width="500" height="300"> 
+<h4> Upload New Video</h4>
+<form action="UploadVideo.do" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="key" value="uploads/${filename}">
+      <!--<input type="hidden" name="Content-Type" value="video/mp4">-->
+      	<input type="hidden" name="userid" value="<%=userId%>">
+      File to upload to S3: 
+      <input name="file" type="file"> 
+      <br> 
+      <input type="submit" value="Upload File to S3"> 
+</form> 
 <!-- 
 <param name="moviename" value="http://fpdownload.adobe.com/strobe/FlashMediaPlayback_101.swf"> </param> 
 <param name="flashvars" value="src=http://d2vpjum3aigw6y.cloudfront.net/videos/sample_mpeg4.mp4"></param> 

@@ -192,13 +192,22 @@ public class VideosDao {
 	public void saveVideoMetadata(String videoId, String userId, String videoLoc, String replyTo)
 	{
 		String sql = "INSERT INTO USR_VIDEOS VALUES (" +  "\'" + videoId +  "\'" + "," +  "\'" + userId +  "\'" + "," +  "\'" + videoLoc+  "\'" + ","+  "\'" + replyTo +  "\'" + ") ";
+		
+		String sql1 = "INSERT INTO USR_VIDEOS (VIDEO_ID, USER_ID, VIDEO_LOC) VALUES (" +  "\'" + videoId +  "\'" + "," +  "\'" + userId +  "\'" + "," +  "\'" + videoLoc+  "\'"  + ") ";
 		Connection conn = null;
 		 
 		try 
 		{
 			conn = dataSource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.executeUpdate(sql); 
+			PreparedStatement ps = null;
+			if(replyTo != null && replyTo.length()>0) {
+				ps = conn.prepareStatement(sql);
+				ps.executeUpdate(sql); 
+			} else {
+				ps = conn.prepareStatement(sql1);
+				ps.executeUpdate(sql1); 
+			}
+			
 			ps.close();
 		} 
 		catch (SQLException e) 
@@ -233,8 +242,8 @@ public class VideosDao {
 			User usr = new User();
 			while (rs.next()) {
 				usr.setEmail(rs.getString("EMAIL"));
-				usr.setEmail(rs.getString("PH_NO"));
-				usr.setEmail(rs.getString("GROUP_ID"));
+				usr.setPhoneNumber(rs.getString("PH_NO"));
+				usr.setGroupNumber(rs.getString("GROUP_ID"));
 			}
 			rs.close();
 			ps.close();
