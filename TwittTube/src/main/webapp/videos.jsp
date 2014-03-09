@@ -22,7 +22,7 @@
 <body>
 <table>
 	<tr>
-		<td>Video Uploaded by <%=mainVideo.getUploadedBy()%></td>
+		<td><h3>Video Uploaded by <%=mainVideo.getUploadedBy()%></h3></td>
 	</tr>
 	<tr>
 		<td> 
@@ -50,9 +50,10 @@
 </table>
 <table>
 	<tr>
-		<td>Replies to the Video</td>
+		<td> <h3>Replies to the Video</h3></td>
 	</tr>
 	<% for(int i=0;i<replyList.size();i++) { %>
+	<tr><td> Replied by <%=replyList.get(i).getUploadedBy()%></td></tr>
 	<tr>
 		<td> 
 			<video width="320" height="240" controls>
