@@ -53,7 +53,7 @@ public class VideoServlet extends HttpServlet {
 				if(allvideos.get(i).getReplyVideoId() == null) {
 					mainVideo = allvideos.get(i);
 					if(isMobileRequest) {
-						mainVideo.setVideoLoc(mainVideo.getVideoLoc().replaceAll("twittest", "twittestiphone"));
+						mainVideo.setVideoLoc(mainVideo.getVideoLoc().replaceAll("d2vpjum3aigw6y", "d1s8tdepuogpuo"));
 					}
 					break;
 				}

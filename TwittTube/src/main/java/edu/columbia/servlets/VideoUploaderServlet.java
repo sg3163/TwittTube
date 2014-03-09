@@ -113,7 +113,7 @@ public class VideoUploaderServlet extends HttpServlet {
 					Pipeline pipeline = null;
 					
 					for (Pipeline pip : listPipelineResult.getPipelines()) {
-						if(pip.getName().equalsIgnoreCase("iphonevideoconverter")) {
+						if(pip.getName().equalsIgnoreCase("TwittTubePipeline")) {
 							pipeline = pip;
 							break;
 						}

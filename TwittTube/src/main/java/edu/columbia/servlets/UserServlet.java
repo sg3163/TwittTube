@@ -48,7 +48,7 @@ public class UserServlet extends HttpServlet {
 			if(isMobile) {
 				for(int i=0;i<allvideos.size();i++) {
 					Video vid = allvideos.get(i);
-					vid.setVideoLoc(vid.getVideoLoc().replaceAll("twittest", "twittestiphone"));
+					vid.setVideoLoc(vid.getVideoLoc().replaceAll("d2vpjum3aigw6y", "d1s8tdepuogpuo"));
 				}
 			}
 			
