@@ -57,7 +57,7 @@ public class SnsManager {
 		}
 	}
 	
-	public void sendMessage(String groupID, String firstName, String lastName)
+	public void sendMessage(String groupID)
 	{
 		ListTopicsResult r = sns.listTopics();
 		
@@ -66,7 +66,7 @@ public class SnsManager {
 			String arn = t.getTopicArn();
 			String[] arnArr = arn.split(":");
 			if (arnArr[arnArr.length - 1].equalsIgnoreCase("TwittTubeTopic" + groupID))
-				sns.publish(arn, "a new video posted by " + firstName + " " + lastName, "a new video posted");
+				sns.publish(arn, "a new video posted", "a new video posted");
 		}
 	}
 }

@@ -96,7 +96,7 @@ public class VideoUploaderServlet extends HttpServlet {
 					sns.createTopic(groupID);
 				
 				sns.subscribe(groupID, phoneNumber, email);
-				sns.sendMessage(groupID, user.getFirstName(), user.getLastName());
+				sns.sendMessage(groupID);
 				
 				m.putObject("videos/" + filename, f);
 				dao.saveVideoMetadata(videoId, userId, videoLoc, videoReplyTo);
